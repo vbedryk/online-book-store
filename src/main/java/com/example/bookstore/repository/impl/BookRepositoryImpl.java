@@ -1,23 +1,20 @@
 package com.example.bookstore.repository.impl;
 
+import com.example.bookstore.exception.DataProcessingException;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.BookRepository;
 import jakarta.persistence.criteria.CriteriaQuery;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
-
-    @Autowired
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Override
     public Book save(Book book) {
@@ -33,7 +30,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't insert book " + book, e);
+            throw new DataProcessingException("Can't insert book " + book, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -49,7 +46,7 @@ public class BookRepositoryImpl implements BookRepository {
             criteriaQuery.from(Book.class);
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get all books");
+            throw new DataProcessingException("Can't get all books", e);
         }
     }
 }
