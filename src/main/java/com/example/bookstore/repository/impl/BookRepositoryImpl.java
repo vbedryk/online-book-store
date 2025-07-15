@@ -4,6 +4,7 @@ import com.example.bookstore.exception.DataProcessingException;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.BookRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -43,6 +44,18 @@ public class BookRepositoryImpl implements BookRepository {
             return session.createQuery("SELECT b FROM Book b", Book.class).getResultList();
         } catch (Exception e) {
             throw new DataProcessingException("Can't get all books", e);
+        }
+    }
+
+    @Override
+    public Optional<Book> get(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return Optional.ofNullable(session.createQuery(
+                    "SELECT b FROM Book b WHERE b.id = :id", Book.class)
+                    .setParameter("id", id)
+                    .getSingleResult());
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't get book by id: " + id, e);
         }
     }
 }
