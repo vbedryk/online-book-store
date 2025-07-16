@@ -30,7 +30,7 @@ public class BooksController {
         return bookService.get(id);
     }
 
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto createBook(@RequestBody CreateBookRequestDto requestDto) {
         return bookService.save(requestDto);
