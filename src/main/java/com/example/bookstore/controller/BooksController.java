@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Book API", description = "Operations related to books")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/books")
-@Tag(name = "Book API", description = "Operations related to books")
 public class BooksController {
     private final BookService bookService;
 
@@ -35,30 +35,34 @@ public class BooksController {
         return bookService.findAll(pageable);
     }
 
-    @Operation(summary = "Get book by id")
+    @Operation(summary = "Get book by id", description = "Get book by id")
     @GetMapping("/{id}")
     public BookDto getBookById(@PathVariable Long id) {
         return bookService.get(id);
     }
 
-    @Operation(summary = "Search books by parameters")
+    @Operation(summary = "Search books by parameters",
+            description = "Search books by parameters : authors, titles, isbns")
     @GetMapping("/search")
     public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
         return bookService.search(searchParameters);
     }
 
+    @Operation(summary = "Create book", description = "Create book")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto requestDto) {
         return bookService.save(requestDto);
     }
 
+    @Operation(summary = "Delete book by id", description = "Delete book by id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBookById(@PathVariable Long id) {
         bookService.deleteById(id);
     }
 
+    @Operation(summary = "Update books by id",description = "Update book by id")
     @PutMapping("/{id}")
     public BookDto updateBookById(@RequestBody @Valid CreateBookRequestDto requestDto,
                                   @PathVariable Long id) {
