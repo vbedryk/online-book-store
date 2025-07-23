@@ -35,15 +35,6 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
     }
 
-    private String getErrorsMessage(ObjectError e) {
-        if (e instanceof FieldError fieldError) {
-            String field = fieldError.getField();
-            String message = e.getDefaultMessage();
-            return field + " " + message;
-        }
-        return e.getDefaultMessage();
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
         return new ResponseEntity<>("An unexpected error occurred",
@@ -52,11 +43,21 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return new ResponseEntity<>("Entity not found exception occurred", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Entity not found exception occurred",
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(DataProcessingException.class)
     public ResponseEntity<String> handleDataProcessingException(DataProcessingException ex) {
         return new ResponseEntity<>("Entity not found exception occurred", HttpStatus.NOT_FOUND);
+    }
+
+    private String getErrorsMessage(ObjectError e) {
+        if (e instanceof FieldError fieldError) {
+            String field = fieldError.getField();
+            String message = e.getDefaultMessage();
+            return field + " " + message;
+        }
+        return e.getDefaultMessage();
     }
 }
