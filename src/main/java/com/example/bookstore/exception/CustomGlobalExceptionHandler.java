@@ -46,6 +46,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(RegistrationException.class)
+    public ResponseEntity<String> handleRegistrationException(RegistrationException ex) {
+        return new ResponseEntity<>("You can't register user", HttpStatus.CONFLICT);
+    }
+
     private String getErrorsMessage(ObjectError e) {
         if (e instanceof FieldError fieldError) {
             String field = fieldError.getField();
