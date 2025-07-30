@@ -8,6 +8,7 @@ import com.example.bookstore.model.User;
 import com.example.bookstore.repository.user.UserRepository;
 import com.example.bookstore.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto userRegistrationRequestDto)
@@ -24,6 +26,7 @@ public class UserServiceImpl implements UserService {
                     userRegistrationRequestDto.getEmail()));
         }
         User user = userMapper.toModel(userRegistrationRequestDto);
+        user.setPassword(passwordEncoder.encode(userRegistrationRequestDto.getPassword()));
         return userMapper.toDto(userRepository.save(user));
     }
 }
