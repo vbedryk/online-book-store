@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books
+      author: vlad
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "Clean Code"}
+              - column: {name: author, value: "Robert C. Martin"}
+              - column: {name: isbn, value: "9780132350884"}
+              - column: {name: price, valueNumeric: 39.99}
+              - column: {name: description, value: "A Handbook of Agile Software Craftsmanship"}
+              - column: {name: cover_image, value: "clean_code.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "The Pragmatic Programmer"}
+              - column: {name: author, value: "Andrew Hunt, David Thomas"}
+              - column: {name: isbn, value: "9780201616224"}
+              - column: {name: price, valueNumeric: 42.00}
+              - column: {name: description, value: "Your Journey to Mastery"}
+              - column: {name: cover_image, value: "pragmatic_programmer.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "Effective Java"}
+              - column: {name: author, value: "Joshua Bloch"}
+              - column: {name: isbn, value: "9780134685991"}
+              - column: {name: price, valueNumeric: 45.50}
+              - column: {name: description, value: "Best practices for the Java platform"}
+              - column: {name: cover_image, value: "effective_java.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "Design Patterns"}
+              - column: {name: author, value: "Erich Gamma et al."}
+              - column: {name: isbn, value: "9780201633610"}
+              - column: {name: price, valueNumeric: 49.99}
+              - column: {name: description, value: "Elements of Reusable Object-Oriented Software"}
+              - column: {name: cover_image, value: "design_patterns.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "Refactoring"}
+              - column: {name: author, value: "Martin Fowler"}
+              - column: {name: isbn, value: "9780201485677"}
+              - column: {name: price, valueNumeric: 38.75}
+              - column: {name: description, value: "Improving the Design of Existing Code"}
+              - column: {name: cover_image, value: "refactoring.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}
+
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "Spring in Action"}
+              - column: {name: author, value: "Craig Walls"}
+              - column: {name: isbn, value: "9781617294945"}
+              - column: {name: price, valueNumeric: 44.95}
+              - column: {name: description, value: "Comprehensive guide to Spring Framework"}
+              - column: {name: cover_image, value: "spring_in_action.jpg"}
+              - column: {name: is_deleted, valueBoolean: false}

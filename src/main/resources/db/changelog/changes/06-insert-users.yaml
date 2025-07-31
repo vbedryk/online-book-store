@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-users
+      author: vlad
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column: {name: email, value: "admin@example.com"}
+              - column: {name: password, value: "$2y$10$C/mgOCe4kPnVznzby9ZRu.7sWAWqTDOkU85iJFn9LRnGCjGLl/TbS"} #securePassword123
+              - column: {name: first_name, value: "Admin"}
+              - column: {name: last_name, value: "Admin"}
+              - column: {name: shipping_address, value: "Main St Admin 1"}
+              - column: {name: is_deleted, valueBoolean: false}
+        - insert:
+            tableName: users
+            columns:
+              - column: {name: email, value: "user@example.com"}
+              - column: {name: password, value: "$2y$10$C/mgOCe4kPnVznzby9ZRu.7sWAWqTDOkU85iJFn9LRnGCjGLl/TbS" } #securePassword123
+              - column: {name: first_name, value: "User"}
+              - column: {name: last_name, value: "User"}
+              - column: {name: shipping_address, value: "Main St User 1"}
+              - column: {name: is_deleted, valueBoolean: false}
