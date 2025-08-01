@@ -36,13 +36,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
-        return new ResponseEntity<>("An unexpected error occurred",
+        return new ResponseEntity<>(ex.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return new ResponseEntity<>("Entity not found exception occurred",
+        return new ResponseEntity<>(ex.getMessage(),
                 HttpStatus.NOT_FOUND);
     }
 
