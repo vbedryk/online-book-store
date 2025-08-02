@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
@@ -12,8 +13,10 @@ import lombok.Setter;
 public class UserRegistrationRequestDto {
     @Email
     @NotBlank
+    @Length(min = 10, max = 30)
     private String email;
     @NotBlank
+    @Length(min = 8, max = 20)
     private String password;
     @NotBlank
     private String repeatPassword;
