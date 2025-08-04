@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/categories")
 @RequiredArgsConstructor
 @Tag(name = "Category Api", description = "Operations related to category")
 public class CategoryController {
@@ -29,14 +31,14 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get all categories", description = "Get list of all categories")
-    @GetMapping("/categories")
+    @GetMapping
     public Page<CategoryResponseDto> getAll(Pageable pageable) {
         return categoryService.getAll(pageable);
     }
 
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get category", description = "Get category by id")
-    @GetMapping("/categories/{id}")
+    @GetMapping("/{id}")
     public CategoryResponseDto getCategoryById(@PathVariable Long id) {
         return categoryService.getById(id);
     }
@@ -51,7 +53,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create category", description = "Create a new category")
-    @PostMapping("/categories")
+    @PostMapping
     public CategoryResponseDto createCategory(@RequestBody @Valid
                                                   CategoryRequestDto categoryRequestDto) {
         return categoryService.save(categoryRequestDto);
@@ -59,7 +61,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update category", description = "Update category by id")
-    @PutMapping("/categories/{id}")
+    @PutMapping("/{id}")
     public CategoryResponseDto updateCategory(@PathVariable Long id,
                                               @RequestBody @Valid
                                               CategoryRequestDto categoryRequestDto) {
@@ -68,7 +70,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete category", description = "Delete category by id")
-    @DeleteMapping("/categories/{id}")
+    @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
     }
