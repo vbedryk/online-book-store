@@ -4,7 +4,7 @@ import com.example.bookstore.dto.user.UserRegistrationRequestDto;
 import com.example.bookstore.dto.user.UserResponseDto;
 import com.example.bookstore.exception.EntityNotFoundException;
 import com.example.bookstore.exception.RegistrationException;
-import com.example.bookstore.mapper.UserMapper;
+import com.example.bookstore.dto.user.mapper.UserMapper;
 import com.example.bookstore.model.Role;
 import com.example.bookstore.model.RoleName;
 import com.example.bookstore.model.User;

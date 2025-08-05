@@ -3,7 +3,7 @@ package com.example.bookstore.service.impl;
 import com.example.bookstore.dto.category.CategoryRequestDto;
 import com.example.bookstore.dto.category.CategoryResponseDto;
 import com.example.bookstore.exception.EntityNotFoundException;
-import com.example.bookstore.mapper.CategoryMapper;
+import com.example.bookstore.dto.user.mapper.CategoryMapper;
 import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.example.bookstore.service.CategoryService;
