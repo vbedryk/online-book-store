@@ -1,4 +1,4 @@
-package com.example.bookstore.dto.user.mapper;
+package com.example.bookstore.mapper;
 
 import com.example.bookstore.config.MapperConfig;
 import com.example.bookstore.dto.book.BookDto;

@@ -5,5 +5,6 @@ import com.example.bookstore.dto.user.UserLoginResponseDto;
 
 public interface AuthenticationService {
     UserLoginResponseDto authenticate(UserLoginRequestDto request);
+
     Long getCurrentUserId();
 }
