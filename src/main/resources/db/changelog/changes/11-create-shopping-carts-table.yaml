@@ -7,16 +7,10 @@ databaseChangeLog:
             tableName: shopping_carts
             columns:
               - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
                   name: user_id
                   type: bigint
                   constraints:
+                    primaryKey: true
                     nullable: false
               - column:
                   name: is_deleted

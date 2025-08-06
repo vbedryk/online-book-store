@@ -16,7 +16,9 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -38,8 +40,9 @@ public class UserServiceImpl implements UserService {
         Role userRole = roleRepository.findRoleByName(RoleName.USER).orElseThrow(
                 () -> new EntityNotFoundException("Can't find role for user: "
                         + user.getUsername() + ", role: " + RoleName.USER));
-        shoppingCartService.createEmptyCart(user);
         user.setRoles(Set.of(userRole));
-        return userMapper.toDto(userRepository.save(user));
+        userRepository.save(user);
+        shoppingCartService.createEmptyCart(user);
+        return userMapper.toDto(user);
     }
 }

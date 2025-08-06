@@ -28,7 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Long getCurrentUserId() {
         User currentUser = (User) SecurityContextHolder.getContext()
-                .getAuthentication().getCredentials();
+                .getAuthentication().getPrincipal();
         return currentUser.getId();
     }
 }
