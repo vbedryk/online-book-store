@@ -61,9 +61,9 @@ public class OrderController {
     )
     @PatchMapping("/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStatus(@PathVariable Long orderId,
+    public OrderDto updateStatus(@PathVariable Long orderId,
                              @RequestBody @Valid OrderUpdateRequestDto orderUpdateRequestDto) {
-        orderService.updateStatus(orderId, orderUpdateRequestDto);
+        return orderService.updateStatus(orderId, orderUpdateRequestDto);
     }
 
     @PreAuthorize("hasRole('USER')")

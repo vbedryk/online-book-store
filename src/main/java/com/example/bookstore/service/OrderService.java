@@ -13,7 +13,7 @@ public interface OrderService {
 
     Page<OrderDto> findAll(Long userId, Pageable pageable);
 
-    void updateStatus(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto);
+    OrderDto updateStatus(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto);
 
     Page<OrderItemDto> findAllById(Long orderId, Long userId, Pageable pageable);
 

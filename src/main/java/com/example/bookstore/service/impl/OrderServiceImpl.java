@@ -5,6 +5,7 @@ import com.example.bookstore.dto.order.OrderDto;
 import com.example.bookstore.dto.order.OrderUpdateRequestDto;
 import com.example.bookstore.dto.orderitem.OrderItemDto;
 import com.example.bookstore.exception.EntityNotFoundException;
+import com.example.bookstore.exception.OrderProcessingException;
 import com.example.bookstore.mapper.CartItemMapper;
 import com.example.bookstore.mapper.OrderItemMapper;
 import com.example.bookstore.mapper.OrderMapper;
@@ -47,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Cant find a shopping"
                         + " cart with user id " + currentUserId));
         if (shoppingCart.getCartItems().isEmpty()) {
-            throw new RuntimeException("Shopping cart with user id: "
+            throw new OrderProcessingException("Shopping cart with user id: "
                     + currentUserId + " is empty");
         }
         order.setOrderDate(LocalDateTime.now());
@@ -70,12 +71,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateStatus(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto) {
+    public OrderDto updateStatus(Long orderId, OrderUpdateRequestDto orderUpdateRequestDto) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Cant find a order"
                         + " with id " + orderId));
         order.setStatus(orderUpdateRequestDto.getStatus());
-        orderRepository.save(order);
+        return orderMapper.toDto(orderRepository.save(order));
     }
 
     @Override
