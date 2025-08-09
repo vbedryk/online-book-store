@@ -57,7 +57,9 @@ public class OrderServiceImpl implements OrderService {
                         + " with id " + currentUserId));
         order.setUser(user);
         order.setStatus(Status.PENDING);
-        order.setOrderItems(cartItemMapper.toOrderItem(shoppingCart.getCartItems()));
+        Set<OrderItem> orderItems = cartItemMapper.toOrderItem(shoppingCart.getCartItems());
+        orderItems.forEach(item -> item.setOrder(order));
+        order.setOrderItems(orderItems);
         order.setTotal(countTotalPrice(shoppingCart.getCartItems()));
         shoppingCart.getCartItems().clear();
         shoppingCartRepository.save(shoppingCart);
