@@ -6,6 +6,9 @@ import com.example.bookstore.dto.shoppingcart.CartItemRequestDto;
 import com.example.bookstore.dto.shoppingcart.CartItemUpdateDto;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.model.CartItem;
+import com.example.bookstore.model.OrderItem;
+import java.util.HashSet;
+import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -30,5 +33,20 @@ public interface CartItemMapper {
         Book book = new Book();
         book.setId(bookId);
         return book;
+    }
+
+    default Set<OrderItem> toOrderItem(Set<CartItem> cartItems) {
+        if (cartItems == null || cartItems.isEmpty()) {
+            throw new IllegalArgumentException("Can't map empty cart items to order items");
+        }
+        Set<OrderItem> orderItems = new HashSet<>();
+        for (CartItem cartItem : cartItems) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setPrice(cartItem.getBook().getPrice());
+            orderItem.setBook(cartItem.getBook());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItems.add(orderItem);
+        }
+        return orderItems;
     }
 }
