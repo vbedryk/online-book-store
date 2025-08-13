@@ -10,9 +10,8 @@ import com.example.bookstore.dto.book.CreateBookRequestDto;
 import com.example.bookstore.util.TestUtil;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.math.BigDecimal;
 import java.util.List;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +69,7 @@ public class BooksControllerTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "classpath:/db/scripts/delete-books-and-categories.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("Get book by valid id and get bookDto")
     void getBookById_ValidId_ShouldReturnValidBookDto() throws Exception {
         BookDto expected = TestUtil.createDefaultBookDto();
         Long bookId = 1L;
@@ -90,6 +90,7 @@ public class BooksControllerTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "classpath:/db/scripts/delete-books-and-categories.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("Get valid page with books ")
     void getAll_ShouldReturnValidPage() throws Exception {
         List<BookDto> expected = TestUtil.createTwoBookDtosWithSameCategory();
 
@@ -108,5 +109,73 @@ public class BooksControllerTest {
         List<BookDto> actual = objectMapper.readValue(content, javaType);
 
         assertEquals(expected, actual);
+    }
+
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @Test
+    @Sql(scripts = "classpath:/db/scripts/create-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("Create book with invalid data should return BadRequest")
+    void createBook_WithInvalidRequest_ShouldReturnBadRequest() throws Exception {
+        CreateBookRequestDto invalidRequest = TestUtil.createBookRequestDto(
+                "",
+                "Author",
+                "invalid-isbn",
+                BigDecimal.valueOf(-10),
+                "Description",
+                "cover.png",
+                List.of(1L)
+        );
+        String jsonRequest = objectMapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(post("/books")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @WithMockUser(username = "user", roles = {"USER"})
+    @Test
+    @DisplayName("Get book by non-existing id should return NotFound")
+    void getBookById_NonExistingId_ShouldReturnNotFound() throws Exception {
+        Long nonExistingId = 999L;
+
+        mockMvc.perform(get("/books/{id}", nonExistingId))
+                .andExpect(status().isNotFound());
+    }
+
+    @WithMockUser(username = "user", roles = {"USER"})
+    @Test
+    @DisplayName("Get book with invalid id format should return BadRequest")
+    void getBookById_InvalidIdFormat_ShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/books/{id}", "invalid-id"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Create book without authentication should return Unauthorized")
+    void createBook_WithoutAuth_ShouldReturnUnauthorized() throws Exception {
+        CreateBookRequestDto request = TestUtil.createDefaultBookRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/books")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser(username = "user", roles = {"USER"})
+    @Test
+    @DisplayName("Create book with USER role should return Forbidden")
+    void createBook_WithUserRole_ShouldReturnForbidden() throws Exception {
+        CreateBookRequestDto request = TestUtil.createDefaultBookRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/books")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
     }
 }

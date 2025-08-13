@@ -16,11 +16,10 @@ import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.book.BookRepository;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.example.bookstore.service.impl.BookServiceImpl;
+import com.example.bookstore.util.TestUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import com.example.bookstore.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

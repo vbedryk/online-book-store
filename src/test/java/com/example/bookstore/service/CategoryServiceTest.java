@@ -12,6 +12,7 @@ import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.example.bookstore.service.impl.CategoryServiceImpl;
 import com.example.bookstore.util.TestUtil;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ public class CategoryServiceTest {
         Category category = TestUtil.createDefaultCategory();
         CategoryResponseDto expectedDto = TestUtil.createDefaultCategoryResponseDto();
 
-        when(categoryRepository.getReferenceById(existedId)).thenReturn(category);
+        when(categoryRepository.findById(existedId)).thenReturn(Optional.of(category));
         when(categoryMapper.toDto(category)).thenReturn(expectedDto);
 
         // When

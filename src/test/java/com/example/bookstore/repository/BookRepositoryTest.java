@@ -4,14 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.bookstore.config.CustomMySqlContainer;
 import com.example.bookstore.model.Book;
-import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.book.BookRepository;
-import java.math.BigDecimal;
+import com.example.bookstore.util.TestUtil;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-
-import com.example.bookstore.util.TestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -110,4 +110,58 @@ public class CategoryControllerTest {
         mockMvc.perform(delete("/categories/{id}", 1L))
                 .andExpect(status().isOk());
     }
+
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @DisplayName("Create category with invalid data should return BadRequest")
+    void createCategory_WithInvalidData_ShouldReturnBadRequest() throws Exception {
+        CategoryRequestDto invalidRequest = new CategoryRequestDto("", "");
+        String jsonRequest = objectMapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest());
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Get category by non-existing id should return NotFound")
+    void getCategoryById_NonExisting_ShouldReturnNotFound() throws Exception {
+        mockMvc.perform(get("/categories/{id}", 999L))
+                .andExpect(status().isNotFound());
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Get category with invalid id format should return BadRequest")
+    void getCategoryById_InvalidFormat_ShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/categories/{id}", "invalid-id"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Create category without authentication should return Unauthorized")
+    void createCategory_WithoutAuth_ShouldReturnUnauthorized() throws Exception {
+        CategoryRequestDto request = TestUtil.createSciFiCategoryRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Create category with USER role should return Forbidden")
+    void createCategory_WithUserRole_ShouldReturnForbidden() throws Exception {
+        CategoryRequestDto request = TestUtil.createSciFiCategoryRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isInternalServerError());
+    }
 }

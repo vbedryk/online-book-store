@@ -6,7 +6,6 @@ import com.example.bookstore.dto.category.CategoryRequestDto;
 import com.example.bookstore.dto.category.CategoryResponseDto;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.model.Category;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +37,7 @@ public class TestUtil {
     public static CategoryResponseDto createSciFiCategoryResponseDto() {
         return new CategoryResponseDto(1L, "Sci-Fi", "Science fiction books");
     }
+
     public static Book createDefaultBook() {
         Category category = createDefaultCategory();
         Book book = new Book();
@@ -145,5 +145,23 @@ public class TestUtil {
 
     public static List<BookDto> createTwoBookDtosWithSameCategory() {
         return List.of(createDefaultBookDto(), createSecondBookDto());
+    }
+
+    public static CreateBookRequestDto createBookRequestDto(String title,
+                                                            String author,
+                                                            String isbn,
+                                                            BigDecimal price,
+                                                            String description,
+                                                            String coverImage,
+                                                            List<Long> categoryIds) {
+        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+        requestDto.setTitle(title);
+        requestDto.setAuthor(author);
+        requestDto.setIsbn(isbn);
+        requestDto.setPrice(price);
+        requestDto.setDescription(description);
+        requestDto.setCoverImage(coverImage);
+        requestDto.setCategoriesId(categoryIds);
+        return requestDto;
     }
 }
