@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.example.bookstore.config.CustomMySqlContainer;
 import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.category.CategoryRepository;
+import com.example.bookstore.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -33,15 +34,10 @@ public class CategoryRepositoryTest {
     @Sql(scripts = "classpath:db/scripts/delete-one-category.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findById_Ok() {
-        Category expected = new Category();
-        expected.setId(1L);
-        expected.setName("Fantasy");
-        expected.setDescription("Good category");
-
+        Category expected = TestUtil.createDefaultCategory();
         Category actual = categoryRepository.findById(1L).orElseThrow();
 
         assertEquals(expected, actual);
-
     }
 
 }

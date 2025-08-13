@@ -11,6 +11,7 @@ import com.example.bookstore.mapper.CategoryMapper;
 import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.example.bookstore.service.impl.CategoryServiceImpl;
+import com.example.bookstore.util.TestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,19 +32,17 @@ public class CategoryServiceTest {
     @DisplayName("Save category with valid response dto")
     public void save_WithValidData_ShouldReturnCategoryResponseDto() {
         // Given
-        Category category = new Category();
-        category.setId(1L);
-        category.setDescription("Something");
-        category.setName("Fantasy");
-        CategoryResponseDto categoryResponseDto = new CategoryResponseDto(1L,
-                "Fantasy", "Something");
-        when(categoryMapper.toDto(category)).thenReturn(categoryResponseDto);
-        CategoryRequestDto categoryRequestDto = new CategoryRequestDto("Fantasy",
-                "Something");
+        Category category = TestUtil.createDefaultCategory();
+        CategoryResponseDto categoryResponseDto = TestUtil.createDefaultCategoryResponseDto();
+        CategoryRequestDto categoryRequestDto = TestUtil.createDefaultCategoryRequestDto();
+
         when(categoryMapper.toModel(categoryRequestDto)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
+        when(categoryMapper.toDto(category)).thenReturn(categoryResponseDto);
+
         // When
         CategoryResponseDto actual = categoryService.save(categoryRequestDto);
+
         // Then
         assertEquals(categoryResponseDto, actual);
     }
@@ -51,18 +50,16 @@ public class CategoryServiceTest {
     @Test
     @DisplayName("Get category by existed id should return CategoryResponseDto")
     void getById_ExistId_ShouldReturnCategoryResponseDto() {
-        // Given
         long existedId = 1L;
-        Category category = new Category();
-        category.setId(existedId);
-        category.setName("Fantasy");
-        category.setDescription("Something");
-        CategoryResponseDto expectedDto = new CategoryResponseDto(existedId, "Fantasy",
-                "Something");
+        Category category = TestUtil.createDefaultCategory();
+        CategoryResponseDto expectedDto = TestUtil.createDefaultCategoryResponseDto();
+
         when(categoryRepository.getReferenceById(existedId)).thenReturn(category);
         when(categoryMapper.toDto(category)).thenReturn(expectedDto);
+
         // When
         CategoryResponseDto actualDto = categoryService.getById(existedId);
+
         // Then
         assertNotNull(actualDto);
         assertEquals(expectedDto, actualDto);

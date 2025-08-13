@@ -16,10 +16,11 @@ import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.book.BookRepository;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.example.bookstore.service.impl.BookServiceImpl;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.bookstore.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,31 +50,9 @@ public class BookServiceTest {
 
     @BeforeEach
     void setUp() {
-        book = new Book();
-        book.setId(1L);
-        book.setTitle("Test Book");
-        book.setAuthor("Test Author");
-        book.setIsbn("978-1234567890");
-        book.setPrice(BigDecimal.valueOf(29.99));
-        book.setDescription("Test Description");
-        book.setCoverImage("test-cover.jpg");
-
-        bookDto = new BookDto();
-        bookDto.setId(1L);
-        bookDto.setTitle("Test Book");
-        bookDto.setAuthor("Test Author");
-        bookDto.setIsbn("978-1234567890");
-        bookDto.setPrice(BigDecimal.valueOf(29.99));
-        bookDto.setDescription("Test Description");
-        bookDto.setCoverImage("test-cover.jpg");
-
-        createBookRequestDto = new CreateBookRequestDto();
-        createBookRequestDto.setTitle("Updated Book Title");
-        createBookRequestDto.setAuthor("Updated Author");
-        createBookRequestDto.setIsbn("978-1234567890");
-        createBookRequestDto.setPrice(BigDecimal.valueOf(39.99));
-        createBookRequestDto.setDescription("Updated Description");
-        createBookRequestDto.setCoverImage("updated-cover.jpg");
+        book = TestUtil.createTestBook();
+        bookDto = TestUtil.createTestBookDto();
+        createBookRequestDto = TestUtil.createUpdatedBookRequestDto();
     }
 
     @Test

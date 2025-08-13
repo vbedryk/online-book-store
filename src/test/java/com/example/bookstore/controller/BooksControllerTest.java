@@ -7,11 +7,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.bookstore.dto.book.BookDto;
 import com.example.bookstore.dto.book.CreateBookRequestDto;
-import com.example.bookstore.model.Category;
+import com.example.bookstore.util.TestUtil;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
+
 import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,31 +43,10 @@ public class BooksControllerTest {
             Save book and get DTO
             """)
     void createBook_WithValidRequest_ShouldReturnValidBookDto() throws Exception {
-        Long categoryId = 1L;
-        Category category = new Category();
-        category.setId(categoryId);
-        category.setName("Fantasy");
-
-        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
-        createBookRequestDto.setTitle("First");
-        createBookRequestDto.setAuthor("Admin");
-        createBookRequestDto.setIsbn("1234-5678-9");
-        createBookRequestDto.setPrice(BigDecimal.valueOf(10.00));
-        createBookRequestDto.setDescription("Something");
-        createBookRequestDto.setCoverImage("image.png");
-        createBookRequestDto.setCategoriesId(List.of(categoryId));
+        CreateBookRequestDto createBookRequestDto = TestUtil.createDefaultBookRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(createBookRequestDto);
 
-        Long bookId = 1L;
-        BookDto expected = new BookDto();
-        expected.setId(bookId);
-        expected.setTitle("First");
-        expected.setAuthor("Admin");
-        expected.setIsbn("1234-5678-9");
-        expected.setPrice(BigDecimal.valueOf(10.00));
-        expected.setDescription("Something");
-        expected.setCoverImage("image.png");
-        expected.setCategoryIds(List.of(categoryId));
+        BookDto expected = TestUtil.createDefaultBookDto();
 
         MvcResult result = mockMvc.perform(
                         post("/books")
@@ -91,18 +71,8 @@ public class BooksControllerTest {
     @Sql(scripts = "classpath:/db/scripts/delete-books-and-categories.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getBookById_ValidId_ShouldReturnValidBookDto() throws Exception {
-        Long categoryId = 1L;
+        BookDto expected = TestUtil.createDefaultBookDto();
         Long bookId = 1L;
-        BookDto expected = new BookDto();
-        expected.setId(bookId);
-        expected.setTitle("First");
-        expected.setAuthor("Admin");
-        expected.setIsbn("1234-5678-9");
-        expected.setPrice(BigDecimal.valueOf(10.00));
-        expected.setDescription("Something");
-        expected.setCoverImage("image.png");
-        expected.setCategoryIds(List.of(categoryId));
-        Long existedId = 1L;
 
         MvcResult mvcResult = mockMvc.perform(get("/books/{id}", bookId))
                 .andExpect(status().isOk())
@@ -121,27 +91,7 @@ public class BooksControllerTest {
     @Sql(scripts = "classpath:/db/scripts/delete-books-and-categories.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getAll_ShouldReturnValidPage() throws Exception {
-        BookDto bookDto1 = new BookDto();
-        bookDto1.setId(1L);
-        bookDto1.setTitle("First");
-        bookDto1.setAuthor("Admin");
-        bookDto1.setIsbn("1234-5678-9");
-        bookDto1.setPrice(BigDecimal.valueOf(10.00));
-        bookDto1.setDescription("Something");
-        bookDto1.setCoverImage("image.png");
-        bookDto1.setCategoryIds(List.of(1L));
-
-        BookDto bookDto2 = new BookDto();
-        bookDto2.setId(2L);
-        bookDto2.setTitle("Second");
-        bookDto2.setAuthor("User");
-        bookDto2.setIsbn("1234-5678-8");
-        bookDto2.setPrice(BigDecimal.valueOf(100.00));
-        bookDto2.setDescription("Something good");
-        bookDto2.setCoverImage("image2.png");
-        bookDto2.setCategoryIds(List.of(1L));
-
-        List<BookDto> expected = List.of(bookDto1, bookDto2);
+        List<BookDto> expected = TestUtil.createTwoBookDtosWithSameCategory();
 
         MvcResult result = mockMvc.perform(
                         get("/books")

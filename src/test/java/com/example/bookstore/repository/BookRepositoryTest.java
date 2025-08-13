@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import com.example.bookstore.util.TestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,30 +47,7 @@ public class BookRepositoryTest {
             """)
     void findAllByCategoryId_TwoBooksByCategory_Ok() {
         // Given
-        Category category = new Category();
-        category.setId(1L);
-        category.setName("Fantasy");
-        category.setDescription("Good category");
-        Book firstBook = new Book();
-        firstBook.setId(1L);
-        firstBook.setTitle("First");
-        firstBook.setAuthor("Admin");
-        firstBook.setIsbn("1234-5678-9");
-        firstBook.setPrice(BigDecimal.valueOf(10L));
-        firstBook.setDescription("Something");
-        firstBook.setCoverImage("image.png");
-        firstBook.setCategories(Set.of(category));
-
-        Book secondBook = new Book();
-        secondBook.setId(2L);
-        secondBook.setTitle("Second");
-        secondBook.setAuthor("User");
-        secondBook.setIsbn("1234-5678-8");
-        secondBook.setPrice(BigDecimal.valueOf(100L));
-        secondBook.setDescription("Something good");
-        secondBook.setCoverImage("image2.png");
-        secondBook.setCategories(Set.of(category));
-        List<Book> expected = List.of(firstBook, secondBook);
+        List<Book> expected = TestUtil.createTwoBooksWithSameCategory();
         Pageable pageable = PageRequest.of(0, 10);
 
         // When
@@ -76,8 +55,8 @@ public class BookRepositoryTest {
 
         // Then
         assertEquals(expected.size(), actual.size());
-        assertEquals(expected.get(0), firstBook);
-        assertEquals(expected.get(1), secondBook);
+        assertEquals(expected.get(0).getTitle(), actual.get(0).getTitle());
+        assertEquals(expected.get(1).getTitle(), actual.get(1).getTitle());
     }
 
     @Test
@@ -91,7 +70,6 @@ public class BookRepositoryTest {
     void findAllByCategoryId_NonExistCategory_ExpectNull() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Book> expected = Collections.emptyList();
-        ;
         List<Book> actual = bookRepository.getBooksByCategoryId(3L, pageable).toList();
 
         assertEquals(expected, actual);

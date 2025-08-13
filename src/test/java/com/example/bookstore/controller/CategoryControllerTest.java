@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.bookstore.dto.category.CategoryRequestDto;
 import com.example.bookstore.dto.category.CategoryResponseDto;
+import com.example.bookstore.util.TestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,10 +57,7 @@ public class CategoryControllerTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @DisplayName("Create new category")
     void createCategory_ShouldReturnCreatedCategory() throws Exception {
-        CategoryRequestDto requestDto = new CategoryRequestDto(
-                "Sci-Fi",
-                "Science fiction books"
-        );
+        CategoryRequestDto requestDto = TestUtil.createSciFiCategoryRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult mvcResult = mockMvc.perform(post("/categories")
