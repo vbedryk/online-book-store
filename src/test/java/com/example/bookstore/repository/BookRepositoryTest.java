@@ -1,11 +1,11 @@
 package com.example.bookstore.repository;
 
+import static com.example.bookstore.util.TestUtil.createTwoBooksWithSameCategory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.example.bookstore.config.CustomMySqlContainer;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.book.BookRepository;
-import com.example.bookstore.util.TestUtil;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +43,7 @@ public class BookRepositoryTest {
             """)
     void findAllByCategoryId_TwoBooksByCategory_Ok() {
         // Given
-        List<Book> expected = TestUtil.createTwoBooksWithSameCategory();
+        List<Book> expected = createTwoBooksWithSameCategory();
         Pageable pageable = PageRequest.of(0, 10);
 
         // When
@@ -51,8 +51,7 @@ public class BookRepositoryTest {
 
         // Then
         assertEquals(expected.size(), actual.size());
-        assertEquals(expected.get(0).getTitle(), actual.get(0).getTitle());
-        assertEquals(expected.get(1).getTitle(), actual.get(1).getTitle());
+        assertEquals(expected, actual);
     }
 
     @Test

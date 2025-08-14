@@ -1,5 +1,8 @@
 package com.example.bookstore.service;
 
+import static com.example.bookstore.util.TestUtil.createDefaultCategory;
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryRequestDto;
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryResponseDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
@@ -11,7 +14,6 @@ import com.example.bookstore.mapper.CategoryMapper;
 import com.example.bookstore.model.Category;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.example.bookstore.service.impl.CategoryServiceImpl;
-import com.example.bookstore.util.TestUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,9 +35,9 @@ public class CategoryServiceTest {
     @DisplayName("Save category with valid response dto")
     public void save_WithValidData_ShouldReturnCategoryResponseDto() {
         // Given
-        Category category = TestUtil.createDefaultCategory();
-        CategoryResponseDto categoryResponseDto = TestUtil.createDefaultCategoryResponseDto();
-        CategoryRequestDto categoryRequestDto = TestUtil.createDefaultCategoryRequestDto();
+        Category category = createDefaultCategory();
+        CategoryResponseDto categoryResponseDto = createDefaultCategoryResponseDto();
+        CategoryRequestDto categoryRequestDto = createDefaultCategoryRequestDto();
 
         when(categoryMapper.toModel(categoryRequestDto)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
@@ -52,8 +54,8 @@ public class CategoryServiceTest {
     @DisplayName("Get category by existed id should return CategoryResponseDto")
     void getById_ExistId_ShouldReturnCategoryResponseDto() {
         long existedId = 1L;
-        Category category = TestUtil.createDefaultCategory();
-        CategoryResponseDto expectedDto = TestUtil.createDefaultCategoryResponseDto();
+        Category category = createDefaultCategory();
+        CategoryResponseDto expectedDto = createDefaultCategoryResponseDto();
 
         when(categoryRepository.findById(existedId)).thenReturn(Optional.of(category));
         when(categoryMapper.toDto(category)).thenReturn(expectedDto);

@@ -1,5 +1,8 @@
 package com.example.bookstore.service;
 
+import static com.example.bookstore.util.TestUtil.createTestBook;
+import static com.example.bookstore.util.TestUtil.createTestBookDto;
+import static com.example.bookstore.util.TestUtil.createUpdatedBookRequestDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,7 +19,6 @@ import com.example.bookstore.model.Book;
 import com.example.bookstore.repository.book.BookRepository;
 import com.example.bookstore.repository.category.CategoryRepository;
 import com.example.bookstore.service.impl.BookServiceImpl;
-import com.example.bookstore.util.TestUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +51,9 @@ public class BookServiceTest {
 
     @BeforeEach
     void setUp() {
-        book = TestUtil.createTestBook();
-        bookDto = TestUtil.createTestBookDto();
-        createBookRequestDto = TestUtil.createUpdatedBookRequestDto();
+        book = createTestBook();
+        bookDto = createTestBookDto();
+        createBookRequestDto = createUpdatedBookRequestDto();
     }
 
     @Test
@@ -64,13 +66,11 @@ public class BookServiceTest {
         when(categoryRepository.findAllById(any())).thenReturn(Collections.emptyList());
 
         // When
-        BookDto result = bookService.save(createBookRequestDto);
+        BookDto actual = bookService.save(createBookRequestDto);
 
         // Then
-        assertNotNull(result);
-        assertEquals(bookDto.getId(), result.getId());
-        assertEquals(bookDto.getTitle(), result.getTitle());
-        assertEquals(bookDto.getAuthor(), result.getAuthor());
+        assertNotNull(actual);
+        assertEquals(bookDto, actual);
         verify(bookMapper).toModel(createBookRequestDto);
         verify(bookRepository).save(book);
         verify(bookMapper).toDto(book);
@@ -149,14 +149,11 @@ public class BookServiceTest {
         when(bookRepository.save(book)).thenReturn(book);
         when(bookMapper.toDto(book)).thenReturn(bookDto);
         // When
-        BookDto result = bookService.update(createBookRequestDto, existedId);
+        BookDto actual = bookService.update(createBookRequestDto, existedId);
 
         // Then
-        assertNotNull(result);
-        assertEquals(bookDto.getId(), result.getId());
-        assertEquals(bookDto.getTitle(), result.getTitle());
-        assertEquals(bookDto.getAuthor(), result.getAuthor());
-
+        assertNotNull(actual);
+        assertEquals(bookDto, actual);
         verify(bookRepository).findById(existedId);
         verify(bookMapper).updateBookFromDto(createBookRequestDto, book);
         verify(bookRepository).save(book);

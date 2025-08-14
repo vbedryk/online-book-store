@@ -1,6 +1,7 @@
 package com.example.bookstore.util;
 
 import com.example.bookstore.dto.book.BookDto;
+import com.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookstore.dto.book.CreateBookRequestDto;
 import com.example.bookstore.dto.category.CategoryRequestDto;
 import com.example.bookstore.dto.category.CategoryResponseDto;
@@ -45,7 +46,7 @@ public class TestUtil {
         book.setTitle("First");
         book.setAuthor("Admin");
         book.setIsbn("1234-5678-9");
-        book.setPrice(BigDecimal.valueOf(10.00));
+        book.setPrice(BigDecimal.valueOf(10.99));
         book.setDescription("Something");
         book.setCoverImage("image.png");
         book.setCategories(Set.of(category));
@@ -59,7 +60,7 @@ public class TestUtil {
         book.setTitle("Second");
         book.setAuthor("User");
         book.setIsbn("1234-5678-8");
-        book.setPrice(BigDecimal.valueOf(100.00));
+        book.setPrice(BigDecimal.valueOf(100.99));
         book.setDescription("Something good");
         book.setCoverImage("image2.png");
         book.setCategories(Set.of(category));
@@ -84,7 +85,7 @@ public class TestUtil {
         bookDto.setTitle("First");
         bookDto.setAuthor("Admin");
         bookDto.setIsbn("1234-5678-9");
-        bookDto.setPrice(BigDecimal.valueOf(10.00));
+        bookDto.setPrice(BigDecimal.valueOf(10.99));
         bookDto.setDescription("Something");
         bookDto.setCoverImage("image.png");
         bookDto.setCategoryIds(List.of(1L));
@@ -97,7 +98,7 @@ public class TestUtil {
         bookDto.setTitle("Second");
         bookDto.setAuthor("User");
         bookDto.setIsbn("1234-5678-8");
-        bookDto.setPrice(BigDecimal.valueOf(100.00));
+        bookDto.setPrice(BigDecimal.valueOf(100.99));
         bookDto.setDescription("Something good");
         bookDto.setCoverImage("image2.png");
         bookDto.setCategoryIds(List.of(1L));
@@ -121,7 +122,7 @@ public class TestUtil {
         requestDto.setTitle("First");
         requestDto.setAuthor("Admin");
         requestDto.setIsbn("1234-5678-9");
-        requestDto.setPrice(BigDecimal.valueOf(10.00));
+        requestDto.setPrice(BigDecimal.valueOf(10.99));
         requestDto.setDescription("Something");
         requestDto.setCoverImage("image.png");
         requestDto.setCategoriesId(List.of(1L));
@@ -163,5 +164,18 @@ public class TestUtil {
         requestDto.setCoverImage(coverImage);
         requestDto.setCategoriesId(categoryIds);
         return requestDto;
+    }
+
+    public static BookDtoWithoutCategoryIds createDefaultBookDtoWithoutCategories() {
+        BookDtoWithoutCategoryIds bookDto = new BookDtoWithoutCategoryIds(
+                1L,
+                "First",
+                "Admin",
+                "1234-5678-9",
+                BigDecimal.valueOf(10.99),
+                "Something",
+                "image.png"
+        );
+        return bookDto;
     }
 }

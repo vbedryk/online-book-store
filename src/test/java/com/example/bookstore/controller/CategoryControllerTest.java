@@ -1,6 +1,9 @@
 package com.example.bookstore.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryResponseDto;
+import static com.example.bookstore.util.TestUtil.createSciFiCategoryRequestDto;
+import static com.example.bookstore.util.TestUtil.createSciFiCategoryResponseDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -8,8 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.bookstore.dto.category.CategoryRequestDto;
 import com.example.bookstore.dto.category.CategoryResponseDto;
-import com.example.bookstore.util.TestUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +45,26 @@ public class CategoryControllerTest {
     @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getAllCategories_ShouldReturnCategories() throws Exception {
+        CategoryResponseDto expected = createDefaultCategoryResponseDto();
+
         MvcResult mvcResult = mockMvc.perform(get("/categories")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String content = mvcResult.getResponse().getContentAsString();
-        assertThat(content).contains("Fantasy");
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        var jsonNode = objectMapper.readTree(responseContent);
+        var contentArray = jsonNode.get("content");
+
+        List<CategoryResponseDto> actualList = objectMapper.readValue(
+                contentArray.toString(),
+                new TypeReference<>() {
+                }
+        );
+
+        CategoryResponseDto actual = actualList.get(0);
+        assertEquals(expected, actual);
     }
 
     @WithMockUser(roles = "ADMIN")
@@ -57,7 +73,8 @@ public class CategoryControllerTest {
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @DisplayName("Create new category")
     void createCategory_ShouldReturnCreatedCategory() throws Exception {
-        CategoryRequestDto requestDto = TestUtil.createSciFiCategoryRequestDto();
+        CategoryRequestDto requestDto = createSciFiCategoryRequestDto();
+        CategoryResponseDto expected = createSciFiCategoryResponseDto();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult mvcResult = mockMvc.perform(post("/categories")
@@ -66,14 +83,11 @@ public class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CategoryResponseDto responseDto = objectMapper.readValue(mvcResult
+        CategoryResponseDto actual = objectMapper.readValue(mvcResult
                         .getResponse().getContentAsString(),
                 CategoryResponseDto.class);
 
-        assertThat(responseDto.name()).isEqualTo("Sci-Fi");
-        assertThat(responseDto.description())
-                .isEqualTo("Science fiction books");
-        assertThat(responseDto.id()).isNotNull();
+        assertEquals(expected, actual);
     }
 
     @WithMockUser(roles = "USER")
@@ -86,17 +100,17 @@ public class CategoryControllerTest {
     @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getCategoryById_ShouldReturnCategory() throws Exception {
+        CategoryResponseDto expected = createDefaultCategoryResponseDto();
         MvcResult mvcResult = mockMvc.perform(get("/categories/{id}",
                         1L))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CategoryResponseDto category = objectMapper.readValue(mvcResult.getResponse()
+        CategoryResponseDto actual = objectMapper.readValue(mvcResult.getResponse()
                         .getContentAsString(),
                 CategoryResponseDto.class);
 
-        assertThat(category.id()).isEqualTo(1L);
-        assertThat(category.name()).isEqualTo("Fantasy");
+        assertEquals(expected, actual);
     }
 
     @WithMockUser(roles = "ADMIN")
@@ -143,7 +157,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("Create category without authentication should return Unauthorized")
     void createCategory_WithoutAuth_ShouldReturnUnauthorized() throws Exception {
-        CategoryRequestDto request = TestUtil.createSciFiCategoryRequestDto();
+        CategoryRequestDto request = createSciFiCategoryRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/categories")
@@ -156,7 +170,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("Create category with USER role should return Forbidden")
     void createCategory_WithUserRole_ShouldReturnForbidden() throws Exception {
-        CategoryRequestDto request = TestUtil.createSciFiCategoryRequestDto();
+        CategoryRequestDto request = createSciFiCategoryRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/categories")
