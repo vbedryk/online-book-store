@@ -21,6 +21,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @Entity
 @SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id=?")
 @SQLRestriction(value = "is_deleted=false")

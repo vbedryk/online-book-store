@@ -1,0 +1,181 @@
+package com.example.bookstore.controller;
+
+import static com.example.bookstore.util.TestUtil.createDefaultCategoryResponseDto;
+import static com.example.bookstore.util.TestUtil.createSciFiCategoryRequestDto;
+import static com.example.bookstore.util.TestUtil.createSciFiCategoryResponseDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.example.bookstore.dto.category.CategoryRequestDto;
+import com.example.bookstore.dto.category.CategoryResponseDto;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+public class CategoryControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Should return list of categories")
+    @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:/db/scripts/create-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getAllCategories_ShouldReturnCategories() throws Exception {
+        CategoryResponseDto expected = createDefaultCategoryResponseDto();
+
+        MvcResult mvcResult = mockMvc.perform(get("/categories")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        var jsonNode = objectMapper.readTree(responseContent);
+        var contentArray = jsonNode.get("content");
+
+        List<CategoryResponseDto> actualList = objectMapper.readValue(
+                contentArray.toString(),
+                new TypeReference<>() {
+                }
+        );
+
+        CategoryResponseDto actual = actualList.get(0);
+        assertEquals(expected, actual);
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @DisplayName("Create new category")
+    void createCategory_ShouldReturnCreatedCategory() throws Exception {
+        CategoryRequestDto requestDto = createSciFiCategoryRequestDto();
+        CategoryResponseDto expected = createSciFiCategoryResponseDto();
+        String jsonRequest = objectMapper.writeValueAsString(requestDto);
+
+        MvcResult mvcResult = mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        CategoryResponseDto actual = objectMapper.readValue(mvcResult
+                        .getResponse().getContentAsString(),
+                CategoryResponseDto.class);
+
+        assertEquals(expected, actual);
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Get category by id")
+    @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:/db/scripts/create-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void getCategoryById_ShouldReturnCategory() throws Exception {
+        CategoryResponseDto expected = createDefaultCategoryResponseDto();
+        MvcResult mvcResult = mockMvc.perform(get("/categories/{id}",
+                        1L))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        CategoryResponseDto actual = objectMapper.readValue(mvcResult.getResponse()
+                        .getContentAsString(),
+                CategoryResponseDto.class);
+
+        assertEquals(expected, actual);
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @DisplayName(" Delete category by id")
+    @Sql(scripts = "classpath:/db/scripts/delete-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:/db/scripts/create-one-category.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void deleteCategory_ShouldReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/categories/{id}", 1L))
+                .andExpect(status().isOk());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @DisplayName("Create category with invalid data should return BadRequest")
+    void createCategory_WithInvalidData_ShouldReturnBadRequest() throws Exception {
+        CategoryRequestDto invalidRequest = new CategoryRequestDto("", "");
+        String jsonRequest = objectMapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest());
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Get category by non-existing id should return NotFound")
+    void getCategoryById_NonExisting_ShouldReturnNotFound() throws Exception {
+        mockMvc.perform(get("/categories/{id}", 999L))
+                .andExpect(status().isNotFound());
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Get category with invalid id format should return BadRequest")
+    void getCategoryById_InvalidFormat_ShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/categories/{id}", "invalid-id"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Create category without authentication should return Unauthorized")
+    void createCategory_WithoutAuth_ShouldReturnUnauthorized() throws Exception {
+        CategoryRequestDto request = createSciFiCategoryRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser(roles = "USER")
+    @Test
+    @DisplayName("Create category with USER role should return Forbidden")
+    void createCategory_WithUserRole_ShouldReturnForbidden() throws Exception {
+        CategoryRequestDto request = createSciFiCategoryRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isInternalServerError());
+    }
+}

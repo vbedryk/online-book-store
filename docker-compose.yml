@@ -24,7 +24,7 @@ services:
     depends_on:
       - mysqldb
     restart: on-failure
-    image: posts-service
+    image: book_store
     build: .
     env_file: ./.env
     ports:
