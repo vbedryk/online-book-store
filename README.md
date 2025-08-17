@@ -152,7 +152,97 @@ The project uses **Liquibase** for complete database lifecycle management:
 🛒 Shopping Carts → 📋 Cart Items (One-to-Many)
 📦 Orders → 📋 Order Items (One-to-Many)
 ```
+## 🗄️ Database ER Diagram
 
+```mermaid
+erDiagram
+    USERS {
+        bigint id PK
+        varchar email
+        varchar password
+        varchar first_name
+        varchar last_name
+        varchar shipping_address
+        tinyint is_deleted
+    }
+
+    ROLES {
+        bigint id PK
+        varchar name
+    }
+
+    USERS_ROLES {
+        bigint user_id FK
+        bigint role_id FK
+    }
+
+    BOOKS {
+        bigint id PK
+        varchar title
+        varchar author
+        varchar isbn
+        decimal price
+        varchar description
+        varchar cover_image
+        tinyint is_deleted
+    }
+
+    CATEGORIES {
+        bigint id PK
+        varchar name
+        varchar description
+        tinyint is_deleted
+    }
+
+    BOOKS_CATEGORIES {
+        bigint book_id FK
+        bigint category_id FK
+    }
+
+    SHOPPING_CARTS {
+        bigint user_id FK
+        tinyint is_deleted
+    }
+
+    CART_ITEMS {
+        bigint id PK
+        bigint shopping_cart_id FK
+        bigint book_id FK
+        int quantity
+        tinyint is_deleted
+    }
+
+    ORDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar status
+        decimal total
+        datetime order_date
+        varchar shipping_address
+        tinyint is_deleted
+    }
+
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        bigint book_id FK
+        int quantity
+        decimal price
+        tinyint is_deleted
+    }
+
+    %% relationships
+    USERS ||--o{ USERS_ROLES : has
+    ROLES ||--o{ USERS_ROLES : assigned
+    USERS ||--|| SHOPPING_CARTS : owns
+    SHOPPING_CARTS ||--o{ CART_ITEMS : contains
+    BOOKS ||--o{ CART_ITEMS : added
+    USERS ||--o{ ORDERS : places
+    ORDERS ||--o{ ORDER_ITEMS : includes
+    BOOKS ||--o{ ORDER_ITEMS : part_of
+    BOOKS ||--o{ BOOKS_CATEGORIES : classified
+    CATEGORIES ||--o{ BOOKS_CATEGORIES : groups
+```
 
 ### **Pre-loaded Test Data**
 
@@ -419,86 +509,3 @@ We welcome contributions from the community! Here's how you can help:
 **Project Repository**: [BookStore API on GitHub](https://github.com/vbedryk/online-book-store)
 
 ---
-## 🗄️ Database Architecture
-
-```mermaid
-erDiagram
-    USERS {
-        bigint id PK
-        varchar email
-        varchar password
-        varchar first_name
-        varchar last_name
-        varchar shipping_address
-    }
-
-    ROLES {
-        bigint id PK
-        varchar name
-    }
-
-    USER_ROLES {
-        bigint user_id FK
-        bigint role_id FK
-    }
-
-    SHOPPING_CARTS {
-        bigint id PK
-        bigint user_id FK
-    }
-
-    CART_ITEMS {
-        bigint id PK
-        bigint cart_id FK
-        bigint book_id FK
-        int quantity
-    }
-
-    ORDERS {
-        bigint id PK
-        bigint user_id FK
-        decimal total
-        datetime order_date
-        varchar shipping_address
-        varchar status
-    }
-
-    ORDER_ITEMS {
-        bigint id PK
-        bigint order_id FK
-        bigint book_id FK
-        int quantity
-        decimal price
-    }
-
-    BOOKS {
-        bigint id PK
-        varchar title
-        varchar author
-        varchar isbn
-        decimal price
-        text description
-        varchar cover_image
-    }
-
-    CATEGORIES {
-        bigint id PK
-        varchar name
-        text description
-    }
-
-    BOOK_CATEGORIES {
-        bigint book_id FK
-        bigint category_id FK
-    }
-
-    USERS ||--o{ USER_ROLES : has
-    ROLES ||--o{ USER_ROLES : assigned_to
-    USERS ||--|| SHOPPING_CARTS : owns
-    SHOPPING_CARTS ||--o{ CART_ITEMS : contains
-    BOOKS ||--o{ CART_ITEMS : added
-    USERS ||--o{ ORDERS : places
-    ORDERS ||--o{ ORDER_ITEMS : includes
-    BOOKS ||--o{ ORDER_ITEMS : part_of
-    BOOKS ||--o{ BOOK_CATEGORIES : classified_as
-    CATEGORIES ||--o{ BOOK_CATEGORIES : groups
