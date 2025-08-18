@@ -310,6 +310,27 @@ erDiagram
 
 ### **Installation Steps**
 
+#### Clone the Repository
+```bash
+# HTTPS
+git clone https://github.com/vbedryk/online-book-store.git
+
+# SSH (if you have SSH keys configured)
+git clone git@github.com:vbedryk/online-book-store.git
+
+# Navigate to project directory
+cd online-book-store
+```
+
+#### Build & Run with Maven
+```bash
+# Clean and install dependencies
+mvn clean install
+
+# Run the Spring Boot application
+mvn spring-boot:run
+```
+
 ### **Docker Setup (Recommended for Development)**
 ```bash
 # Create .env file (copy from .env.example)
